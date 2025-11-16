@@ -1,0 +1,65 @@
+Q111: Write a program to take an integer array arr and an integer k as inputs. The task is to find the first negative integer in each subarray of size k moving from left to right. If no negative exists in a window, print "0" for that window. Print the results separated by spaces as output.
+
+/*
+Sample Test Cases:
+Input 1:
+arr[] = [-8, 2, 3, -6, 10], k = 2
+Output 1:
+-8 0 -6 -6
+
+Input 2:
+arr[] = [12, -1, -7, 8, -15, 30, 16, 28], k = 3
+Output 2:
+-1 -1 -7 -15 -15 0
+
+Input 3:
+arr[] = [12, 1, 3, 5], k = 3
+Output 3:
+0 0
+
+*/
+
+#include <stdio.h>
+
+int main() {
+    int arr[100000];
+    int q[100000];       // queue to store indices of negative numbers
+    int n, k;
+    int i;
+
+    if (scanf("%d", &n) != 1) return 0;          // read size
+    for (i = 0; i < n; i++) scanf("%d", &arr[i]); // read elements
+    if (scanf("%d", &k) != 1) return 0;          // read window size
+
+    if (k <= 0 || k > n) {                       // invalid window size
+        printf("\n");
+        return 0;
+    }
+
+    int head = 0, tail = 0; // queue is empty when head == tail
+
+    // process first k elements
+    for (i = 0; i < k; i++) {
+        if (arr[i] < 0) q[tail++] = i;  // push index of negative
+    }
+
+    // print result for first window
+    if (head < tail) printf("%d", arr[q[head]]);
+    else printf("0");
+
+    // process rest of the windows
+    for (i = k; i < n; i++) {
+        // remove indices out of this window (i-k is the index leaving)
+        while (head < tail && q[head] <= i - k) head++;
+
+        // if current element is negative, add its index
+        if (arr[i] < 0) q[tail++] = i;
+
+        // print first negative for current window
+        if (head < tail) printf(" %d", arr[q[head]]);
+        else printf(" 0");
+    }
+
+    printf("\n");
+    return 0;
+}
